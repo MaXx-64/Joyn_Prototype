@@ -2,15 +2,50 @@
 
 import Link from "next/link";
 
-// Mock data: 5 days since last connection (disconnected state)
-// To show connected state, change DAYS_SINCE to 2
-const DAYS_SINCE = 5;
-const COMPANION_NAME = "Margaret";
-const COMPANION_ID = "1";
+interface ConnectionNudgeWidgetProps {
+  companionName?: string;
+  companionId?: string;
+  daysSince?: number;
+}
+
 const CONNECTED_THRESHOLD = 3;
 
-export function ConnectionNudgeWidget() {
-  const isDisconnected = DAYS_SINCE > CONNECTED_THRESHOLD;
+export function ConnectionNudgeWidget({
+  companionName,
+  companionId,
+  daysSince = 0,
+}: ConnectionNudgeWidgetProps) {
+  // If there's no companion matched yet, return null or a generic nudge
+  if (!companionName || !companionId) {
+    return (
+      <div
+        style={{
+          backgroundColor: "#E7E2D7",
+          border: "2px solid #C2C8C2",
+          borderRadius: "2rem",
+          padding: "1.5rem",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            color: "#735C00",
+            marginBottom: "0.875rem",
+          }}
+        >
+          Your Connections
+        </p>
+        <p style={{ fontSize: "1.0625rem", color: "#173124", lineHeight: 1.6 }}>
+          Ready to meet someone new? Head over to your matches! 🌻
+        </p>
+      </div>
+    );
+  }
+
+  const isDisconnected = daysSince === 0 || daysSince > CONNECTED_THRESHOLD;
 
   return (
     <div
@@ -37,10 +72,12 @@ export function ConnectionNudgeWidget() {
       {isDisconnected ? (
         <>
           <p style={{ fontSize: "1.0625rem", color: "#173124", lineHeight: 1.6, marginBottom: "0.875rem" }}>
-            You haven&apos;t connected with anyone in {DAYS_SINCE} days — want to reach out to {COMPANION_NAME}?
+            {daysSince === 0
+              ? `Say hello to your newest match, ${companionName}! It's a great day to reach out.`
+              : `You haven't connected with anyone in ${daysSince} days — want to reach out to ${companionName}?`}
           </p>
           <Link
-            href={`/match/${COMPANION_ID}`}
+            href={`/match/${companionId}`}
             style={{
               display: "inline-block",
               backgroundColor: "#735C00",
@@ -54,12 +91,12 @@ export function ConnectionNudgeWidget() {
               lineHeight: "1.5",
             }}
           >
-            Reach out to {COMPANION_NAME} →
+            Reach out to {companionName} →
           </Link>
         </>
       ) : (
         <p style={{ fontSize: "1.0625rem", color: "#173124", lineHeight: 1.6 }}>
-          You connected with {COMPANION_NAME} {DAYS_SINCE} days ago. Keep it up! 🌻
+          You connected with {companionName} {daysSince} days ago. Keep it up! 🌻
         </p>
       )}
     </div>

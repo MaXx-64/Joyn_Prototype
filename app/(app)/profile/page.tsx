@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const arizonaCities = [
   "Phoenix", "Scottsdale", "Mesa", "Tempe", "Chandler", "Gilbert",
@@ -54,14 +55,14 @@ const lookingForOptions = [
 const availabilityOptions = ["Mornings", "Afternoons", "Evenings", "Weekends"];
 
 export default function ProfilePage() {
-  const [name, setName] = useState("Margaret Wilson");
-  const [age, setAge] = useState("71");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
   const [city, setCity] = useState("Phoenix");
-  const [bio, setBio] = useState("Retired schoolteacher who loves outdoor activities and staying active.");
-  const [selectedInterests, setSelectedInterests] = useState<string[]>(["Chair Yoga", "Gardening", "Reading"]);
-  const [connectionPref, setConnectionPref] = useState("same_age");
+  const [bio, setBio] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [connectionPref, setConnectionPref] = useState("both");
   const [fitnessLevel, setFitnessLevel] = useState("Beginner");
-  const [healthGoals, setHealthGoals] = useState("Improve flexibility and balance. Stay social and motivated.");
+  const [healthGoals, setHealthGoals] = useState("");
   const [emergencyName, setEmergencyName] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
   const [saved, setSaved] = useState(false);
@@ -71,8 +72,52 @@ export default function ProfilePage() {
   const [lookingFor, setLookingFor] = useState<string[]>([]);
   const [availability, setAvailability] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => setMounted(true), []);
+  const supabase = createClient();
+
+  useEffect(() => {
+    setMounted(true);
+    async function loadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+        
+      if (profile) {
+        if (profile.full_name) setName(profile.full_name);
+        if (profile.age) setAge(profile.age.toString());
+        if (profile.city) setCity(profile.city);
+        if (profile.fitness_level) {
+          const fl = profile.fitness_level;
+          setFitnessLevel(fl.charAt(0).toUpperCase() + fl.slice(1));
+        }
+        if (profile.connection_preference) setConnectionPref(profile.connection_preference);
+        if (profile.health_goals && profile.health_goals.length > 0) {
+          setHealthGoals(profile.health_goals.join("\\n"));
+        }
+      }
+
+      const { data: userInterests } = await supabase
+        .from("user_interests")
+        .select("interests(name)")
+        .eq("user_id", user.id);
+        
+      if (userInterests) {
+        const interests = userInterests.map((ui: any) => ui.interests?.name).filter(Boolean);
+        setSelectedInterests(interests);
+      }
+      setLoading(false);
+    }
+    loadProfile();
+  }, [supabase]);
 
   function toggleLookingFor(opt: string) {
     setLookingFor((prev) =>
@@ -94,10 +139,60 @@ export default function ProfilePage() {
     );
   }
 
-  function handleSave(e: React.FormEvent) {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    try {
+      // 1. Save main profile data
+      await supabase.from("profiles").upsert({
+        id: user.id,
+        full_name: name || null,
+        age: age ? parseInt(age) : null,
+        city: city || null,
+        fitness_level: fitnessLevel.toLowerCase(),
+        health_goals: healthGoals ? [healthGoals] : [],
+        connection_preference: connectionPref,
+        onboarding_completed: true,
+        updated_at: new Date().toISOString(),
+      });
+
+      // 2. Save interests
+      if (selectedInterests.length > 0) {
+        const { data: allDbInterests } = await supabase.from("interests").select("id, name");
+        if (allDbInterests) {
+          const lowerUserInterests = selectedInterests.map(i => i.toLowerCase());
+          const junctionRows = allDbInterests
+            .filter(i => lowerUserInterests.includes(i.name.toLowerCase()))
+            .map(i => ({ user_id: user.id, interest_id: i.id }));
+            
+          // Delete old interests then insert new ones
+          await supabase.from("user_interests").delete().eq("user_id", user.id);
+          if (junctionRows.length > 0) {
+            await supabase.from("user_interests").insert(junctionRows);
+          }
+        }
+      } else {
+        await supabase.from("user_interests").delete().eq("user_id", user.id);
+      }
+
+      // 3. Trigger embedding generation async
+      fetch("/api/ai/match/embed", { method: "POST" }).catch(console.error);
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  if (!mounted || loading) {
+    return (
+      <div style={{ padding: "2.5rem", color: "#727973", fontFamily: "'Lexend', sans-serif" }}>
+        Loading your profile...
+      </div>
+    );
   }
 
   const initials = name
