@@ -1,13 +1,12 @@
-import { huggingface } from "@ai-sdk/huggingface";
+import { groq } from "@ai-sdk/groq";
 import { streamText, convertToModelMessages, UIMessage } from "ai";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
-// Mistral-7B-Instruct is better tuned for warm, empathetic conversation
-// than Llama 3 8B and handles short, emotive dialogue more naturally.
-const COMPANION_MODEL = huggingface("mistralai/Mistral-7B-Instruct-v0.3");
+const COMPANION_MODEL = groq("llama-3.1-8b-instant");
 
 const COMPANION_SYSTEM_PROMPT = `You are Jo, a warm and caring companion for Joyn users — retired adults in Arizona who are looking for connection and friendship.
 
@@ -30,22 +29,39 @@ Safety rules (non-negotiable):
 - You are a caring friend, not a medical professional or therapist.`;
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    // Rate limiting
+    const rl = checkRateLimit(getClientIp(req));
+    if (!rl.allowed) {
+      return NextResponse.json({ error: rl.reason }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfter) },
+      });
+    }
 
-  if (!user) {
-    return new Response("Unauthorized", { status: 401 });
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const { messages }: { messages: UIMessage[] } = await req.json();
+
+    const result = streamText({
+      model: COMPANION_MODEL,
+      system: COMPANION_SYSTEM_PROMPT,
+      messages: await convertToModelMessages(messages),
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (err) {
+    console.error("[/api/ai/companion] Error:", err);
+    return NextResponse.json(
+      { error: "AI service unavailable. Please try again in a moment." },
+      { status: 503 }
+    );
   }
-
-  const { messages }: { messages: UIMessage[] } = await req.json();
-
-  const result = streamText({
-    model: COMPANION_MODEL,
-    system: COMPANION_SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
-  });
-
-  return result.toUIMessageStreamResponse();
 }

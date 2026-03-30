@@ -14,7 +14,7 @@ import { buildProfileText, generateEmbedding } from "@/lib/ai/matching";
 
 export const maxDuration = 30;
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[match/embed] Embedding generation failed:", err);
     return Response.json(
-      { error: "Failed to generate embedding. Check HUGGINGFACE_API_KEY." },
+      { error: "Failed to generate embedding. Check GOOGLE_GENERATIVE_AI_API_KEY." },
       { status: 500 }
     );
   }

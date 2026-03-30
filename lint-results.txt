@@ -1,0 +1,83 @@
+
+C:\Users\rudhe\Downloads\Joyn\app\(app)\match\[id]\page.tsx
+  23:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rudhe\Downloads\Joyn\app\(app)\match\[id]\page.tsx:23:7
+  21 |     const mock = MOCK_PROFILES[id];
+  22 |     if (mock) {
+> 23 |       setProfile(mock);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |       return;
+  25 |     }
+  26 |                                          react-hooks/set-state-in-effect
+  40:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rudhe\Downloads\Joyn\app\(app)\match\[id]\page.tsx:40:5
+  38 |   useEffect(() => {
+  39 |     if (!profile) return;
+> 40 |     setReasonLoading(true);
+     |     ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |
+  42 |     fetch("/api/ai/match/reason", {
+  43 |       method: "POST",  react-hooks/set-state-in-effect
+
+C:\Users\rudhe\Downloads\Joyn\app\(app)\profile\page.tsx
+   75:19  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rudhe\Downloads\Joyn\app\(app)\profile\page.tsx:75:19
+  73 |   const [mounted, setMounted] = useState(false);
+  74 |
+> 75 |   useEffect(() => setMounted(true), []);
+     |                   ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  76 |
+  77 |   function toggleLookingFor(opt: string) {
+  78 |     setLookingFor((prev) =>  react-hooks/set-state-in-effect
+  137:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @next/next/no-img-element
+
+C:\Users\rudhe\Downloads\Joyn\app\api\ai\match\candidates\route.ts
+  44:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\rudhe\Downloads\Joyn\app\api\ai\match\embed\route.ts
+  17:28  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\rudhe\Downloads\Joyn\components\dashboard\MoodWidget.tsx
+  37:11  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\rudhe\Downloads\Joyn\components\dashboard\MoodWidget.tsx:37:11
+  35 |         const { mood, date } = JSON.parse(raw) as { mood: string; date: string };
+  36 |         if (date === getTodayISO()) {
+> 37 |           setSelectedMood(mood);
+     |           ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  38 |         }
+  39 |       }
+  40 |     } catch {  react-hooks/set-state-in-effect
+
+C:\Users\rudhe\Downloads\Joyn\tailwind.config.ts
+  6:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+✖ 8 problems (4 errors, 4 warnings)
+

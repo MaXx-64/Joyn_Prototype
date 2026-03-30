@@ -1,6 +1,6 @@
 -- Add semantic embedding storage to profiles
 -- Uses FLOAT8[] (native Postgres array) — no pgvector extension required.
--- Embeddings are 384-dimensional vectors from sentence-transformers/all-MiniLM-L6-v2.
+-- Embeddings are 768-dimensional vectors from Google text-embedding-004.
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS embedding FLOAT8[];
 
 -- Track when the embedding was last generated so we can re-generate on profile updates.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const arizonaCities = [
   "Phoenix", "Scottsdale", "Mesa", "Tempe", "Chandler", "Gilbert",
@@ -70,6 +70,9 @@ export default function ProfilePage() {
   const [socialComfort, setSocialComfort] = useState("");
   const [lookingFor, setLookingFor] = useState<string[]>([]);
   const [availability, setAvailability] = useState<string[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   function toggleLookingFor(opt: string) {
     setLookingFor((prev) =>
@@ -106,6 +109,7 @@ export default function ProfilePage() {
 
   return (
     <div
+      suppressHydrationWarning
       style={{
         fontFamily: "'Lexend', sans-serif",
         color: "#173124",
@@ -127,9 +131,9 @@ export default function ProfilePage() {
       </h1>
 
       <form onSubmit={handleSave}>
-        {/* Avatar */}
+        {/* Avatar — client-only to avoid SSR hydration mismatch */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginBottom: "2.5rem" }}>
-          {photoPreview ? (
+          {mounted && photoPreview ? (
             <img
               src={photoPreview}
               alt="Profile photo preview"

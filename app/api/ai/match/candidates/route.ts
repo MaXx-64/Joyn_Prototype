@@ -41,7 +41,7 @@ type SupabaseProfile = {
   user_interests: Array<{ interests: { name: string } }>;
 };
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const supabase = await createClient();
   const {
     data: { user },
