@@ -46,14 +46,14 @@ Tell us about yourself → Get matched → Move together → Build real friendsh
 
 | Layer | Technology |
 |---|---|
-| **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
+| **Framework** | [Next.js 15+](https://nextjs.org/) (App Router) |
 | **Language** | TypeScript |
 | **Styling** | Tailwind CSS v4 + Vanilla CSS |
 | **Database** | [Supabase](https://supabase.com/) (PostgreSQL) |
-| **Auth** | Supabase Auth (SSR) |
-| **AI / LLM** | [Vercel AI SDK](https://sdk.vercel.ai/) + Google Gemini API |
-| **AI Model** | `gemini-2.0-flash` (free tier via Google AI Studio) |
-| **Embeddings** | Semantic vector embeddings for profile matching |
+| **Auth** | Supabase Auth (Email & Google OAuth) |
+| **AI / LLM** | [Vercel AI SDK](https://sdk.vercel.ai/) + [Groq](https://groq.com/) |
+| **AI Model** | `llama-3.1-8b-instant` (Lightning fast inference via Groq Cloud) |
+| **Embeddings** | Hugging Face Inference API (`sentence-transformers/all-MiniLM-L6-v2`) |
 | **Testing** | Vitest + Testing Library |
 | **Fonts** | Epilogue (headings), Lexend (body) |
 
@@ -61,34 +61,30 @@ Tell us about yourself → Get matched → Move together → Build real friendsh
 
 ## Project Structure
 
-```
+```text
 joyn/
 ├── app/
-│   ├── (app)/               # Authenticated app routes
+│   ├── (app)/               # Authenticated app routes (Dynamic data via Supabase)
 │   │   ├── dashboard/       # Main user dashboard
 │   │   ├── onboard/         # AI-guided onboarding chat (Jo)
 │   │   ├── match/           # Match viewing & acceptance
 │   │   ├── messages/        # Direct messaging
 │   │   ├── sessions/        # Workout session scheduler
 │   │   ├── events/          # Arizona events feed
-│   │   └── profile/         # User profile editor
-│   ├── (auth)/              # Sign-in / Sign-up pages
-│   ├── api/
-│   │   └── ai/
-│   │       ├── chat/        # Onboarding AI route (Jo as guide)
-│   │       ├── companion/   # Companion AI route (Jo as friend)
-│   │       └── match/       # Matching & embedding API
-│   ├── layout.tsx
-│   └── page.tsx             # Public landing page
-├── components/
-│   ├── companion/           # CompanionWidget (floating chat)
-│   ├── dashboard/           # Dashboard UI components
-│   └── ui/                  # Shared UI primitives
+│   │   └── profile/         # User profile manager
+│   ├── (auth)/              # Sign-in / Sign-up pages (Google Auth integration)
+│   ├── api/                 # Dynamic serverless API routes
+│   │   ├── ai/
+│   │   │   ├── chat/        # Onboarding AI route
+│   │   │   ├── companion/   # Companion AI route (Jo as friend)
+│   │   │   └── match/       # Matching & embedding API
+│   │   ├── events/          # Fetches local Arizona events
+│   │   └── sessions/        # Fetches user workout history
+├── components/              # Reusable UI React components
 ├── lib/
-│   ├── supabase/            # Supabase client (server + client)
-│   └── utils.ts
-├── supabase/                # DB migrations & schema
-└── __tests__/               # Vitest unit tests
+│   ├── supabase/            # Supabase clients (SSR, Client, Middleware)
+│   └── rate-limit.ts        # Custom sliding-window API rate limiting
+└── supabase/                # DB migrations, policies & schema
 ```
 
 ---
@@ -98,38 +94,40 @@ joyn/
 ### Prerequisites
 
 - Node.js 20+
-- A [Supabase](https://supabase.com/) project
-- A [Hugging Face](https://huggingface.co/) account with API token
+- A [Supabase](https://supabase.com/) project & database
+- A [Groq](https://console.groq.com/) account for free fast inference API key
+- A [Hugging Face](https://huggingface.co/) account with API Token for embeddings
 
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/joyn.git
+git clone https://github.com/Rudheer127/Joyn.git
 cd joyn
 npm install
 ```
 
 ### 2. Set Up Environment Variables
 
-Copy the example env file and fill in your credentials:
+Copy the example env file and fill in your credentials.
 
 ```bash
 cp .env.example .env.local
 ```
 
 ```env
-# Supabase
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Google Gemini (free — get key at https://aistudio.google.com/apikey)
-GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-api-key
+# Generative AI (Groq & HuggingFace)
+GROQ_API_KEY=your-groq-api-key
+HUGGINGFACE_API_KEY=your-hf-api-key
 ```
 
 ### 3. Run Database Migrations
 
-Apply the Supabase migrations to set up your schema:
+Apply the Supabase migrations to set up your schema and policies:
 
 ```bash
 npx supabase db push
