@@ -2,6 +2,8 @@
 
 > Arizona's senior connection platform — pairing retired adults with compatible workout partners and building real friendships through consistent movement.
 
+**Live Demo**: [https://joyn-two.vercel.app](https://joyn-two.vercel.app)
+
 ---
 
 ## The Problem
