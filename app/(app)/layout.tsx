@@ -20,6 +20,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-lexend), sans-serif" }}>
 
+      <style>{`
+        .joyn-nav-link {
+          transition: background-color 0.18s, color 0.18s, transform 0.18s !important;
+        }
+        .joyn-nav-link:hover {
+          background-color: rgba(231,199,76,0.12) !important;
+          color: #e7c74c !important;
+          transform: translateX(4px);
+        }
+        .joyn-nav-link.active:hover {
+          background-color: rgba(255,255,255,0.18) !important;
+        }
+      `}</style>
+
       {/* ── Sidebar ── */}
       <aside style={{
         width: "272px",
@@ -82,6 +96,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
+                className={`joyn-nav-link${isActive ? " active" : ""}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -90,10 +105,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   borderRadius: "0.875rem",
                   textDecoration: "none",
                   fontSize: "1.0625rem",
-                  fontWeight: isActive ? 600 : 400,
-                  color: isActive ? "#FFFFFF" : "rgba(255,255,255,0.65)",
+                  fontWeight: isActive ? 700 : 500,
+                  color: isActive ? "#FFFFFF" : "#e7c74c",
                   backgroundColor: isActive ? "rgba(255,255,255,0.12)" : "transparent",
-                  transition: "background-color 0.15s, color 0.15s",
                   minHeight: "52px",
                   position: "relative",
                 }}

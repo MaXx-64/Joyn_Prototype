@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const result = streamText({
       model: groq("llama-3.1-8b-instant"),
-      system: `You are Jo, a warm and friendly onboarding assistant for Joyn — a matchmaking and virtual fitness platform for retired adults in Arizona.
+      system: `You are Joy, a warm and friendly onboarding assistant for Joyn — a matchmaking and virtual fitness platform for retired adults in Arizona.
 
 Your goal is to collect the following information through natural conversation (3-4 exchanges total):
 1. Their name and which Arizona city they live in

@@ -188,7 +188,7 @@ export default function MatchProfilePage({
               Jo
             </div>
             <p style={{ fontSize: "1rem", color: "#4A5C50", fontStyle: "italic" }}>
-              Jo is thinking about this match…
+              Joy is thinking about this match…
             </p>
           </div>
         ) : (

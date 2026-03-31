@@ -1,14 +1,13 @@
 import { groq } from "@ai-sdk/groq";
 import { streamText, convertToModelMessages, UIMessage } from "ai";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
 const COMPANION_MODEL = groq("llama-3.1-8b-instant");
 
-const COMPANION_SYSTEM_PROMPT = `You are Jo, a warm and caring companion for Joyn users — retired adults in Arizona who are looking for connection and friendship.
+const COMPANION_SYSTEM_PROMPT = `You are Joy, a warm and caring companion for Joyn users — retired adults in Arizona who are looking for connection and friendship.
 
 You are NOT a fitness coach, therapist, or crisis counselor. You are like a friendly neighbor who pops by just to say hello and have a real conversation.
 
@@ -37,15 +36,6 @@ export async function POST(req: NextRequest) {
         status: 429,
         headers: { "Retry-After": String(rl.retryAfter) },
       });
-    }
-
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return new Response("Unauthorized", { status: 401 });
     }
 
     const { messages }: { messages: UIMessage[] } = await req.json();

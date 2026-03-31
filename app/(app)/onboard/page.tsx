@@ -12,7 +12,7 @@ const WELCOME_MESSAGE: UIMessage = {
   parts: [
     {
       type: "text",
-      text: "Hi! I'm Jo 👋 I'm here to help you find the perfect workout partner. This will only take about 3 minutes. First — what's your name?",
+      text: "Hi! I'm Joy 👋 I'm here to help you find the perfect workout partner. This will only take about 3 minutes. First — what's your name?",
     },
   ],
 };
@@ -250,7 +250,7 @@ export default function OnboardPage() {
             letterSpacing: "-0.02em",
             lineHeight: 1.1,
           }}>
-            Meet Jo, your guide
+            Meet Joy, your guide
           </h1>
         </div>
 
@@ -433,7 +433,7 @@ export default function OnboardPage() {
             ref={inputRef}
             type="text"
             className="input-base"
-            placeholder={isStreaming ? "Jo is thinking..." : "Type your message..."}
+            placeholder={isStreaming ? "Joy is thinking..." : "Type your message..."}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             disabled={isStreaming}
