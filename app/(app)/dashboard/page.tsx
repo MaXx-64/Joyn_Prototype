@@ -22,6 +22,7 @@ const ALL_MATCHES = [
     interests: ["Chair Yoga", "Gardening", "Reading", "Walking"],
     bio: "Retired schoolteacher who loves being outdoors and starting the day with a little movement. I'd love a partner for morning chair yoga — it has changed my whole day.",
     matchPct: 97,
+    photo: "/other_assets/marg.jpg",
   },
   {
     id: "2", name: "Robert", age: 68, city: "Scottsdale",
@@ -29,6 +30,7 @@ const ALL_MATCHES = [
     interests: ["Walking", "Music", "Cooking", "Photography"],
     bio: "Former engineer who walks three miles every morning and plays guitar most evenings. Looking for a walking buddy to keep each other accountable.",
     matchPct: 91,
+    photo: "/other_assets/Robert.png",
   },
   {
     id: "3", name: "Dorothy", age: 74, city: "Mesa",
@@ -36,6 +38,7 @@ const ALL_MATCHES = [
     interests: ["Stretching", "Painting", "Birdwatching", "Gardening"],
     bio: "Moved to Mesa five years ago and still building my social circle. I do watercolor painting and early birdwatching at Riparian Preserve most Tuesdays.",
     matchPct: 88,
+    photo: "/other_assets/Dorothy.png",
   },
 ];
 
@@ -53,7 +56,7 @@ const GOALS      = [
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Step = "survey" | "matching" | "dashboard";
 interface Profile { name: string; goal: string; hobbies: string[]; workouts: string[]; time: string; level: string }
-interface Match   { id: string; name: string; age: number; city: string; fitness: string; time: string; interests: string[]; bio: string; matchPct: number }
+interface Match   { id: string; name: string; age: number; city: string; fitness: string; time: string; interests: string[]; bio: string; matchPct: number; photo?: string }
 
 // ── Shared overlay shell ───────────────────────────────────────────────────────
 function Overlay({ children }: { children: React.ReactNode }) {
@@ -273,14 +276,18 @@ function MatchCard({ match, profile, rank, onConnect }: { match: Match; profile:
 
       {/* Header row */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1rem" }}>
-        <div style={{
-          width: "64px", height: "64px", borderRadius: "50%", flexShrink: 0,
-          backgroundColor: C.green, color: C.white,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.25rem",
-        }}>
-          {match.name[0]}
-        </div>
+        {match.photo ? (
+          <img src={match.photo} alt={match.name} style={{ width: "64px", height: "64px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
+        ) : (
+          <div style={{
+            width: "64px", height: "64px", borderRadius: "50%", flexShrink: 0,
+            backgroundColor: C.green, color: C.white,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.25rem",
+          }}>
+            {match.name[0]}
+          </div>
+        )}
 
         <div style={{ flex: 1 }}>
           <p style={{ fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.4rem", color: C.green, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
@@ -412,14 +419,18 @@ function Dashboard({ profile, match, onReset }: { profile: Profile; match: Match
               boxShadow: "0 4px 24px rgba(231,199,76,0.15)",
             }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "1.25rem", marginBottom: "1.25rem" }}>
-                <div style={{
-                  width: "72px", height: "72px", borderRadius: "50%", flexShrink: 0,
-                  backgroundColor: C.green, color: C.white,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.5rem",
-                }}>
-                  {match.name[0]}
-                </div>
+                {match.photo ? (
+                  <img src={match.photo} alt={match.name} style={{ width: "72px", height: "72px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
+                ) : (
+                  <div style={{
+                    width: "72px", height: "72px", borderRadius: "50%", flexShrink: 0,
+                    backgroundColor: C.green, color: C.white,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.5rem",
+                  }}>
+                    {match.name[0]}
+                  </div>
+                )}
                 <div style={{ flex: 1 }}>
                   <p style={{ fontFamily: "var(--font-epilogue)", fontWeight: 800, fontSize: "1.5rem", color: C.green, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
                     {match.name}, {match.age}

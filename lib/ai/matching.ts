@@ -33,6 +33,7 @@ export interface MatchCandidate {
   initials: string;
   matchPct: number;
   phone?: string;
+  photo?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -51,6 +52,7 @@ export const MOCK_MATCHES: MatchCandidate[] = [
     initials: "MW",
     matchPct: 97,
     phone: "6025550101",
+    photo: "/other_assets/marg.jpg",
   },
   {
     id: "2",
@@ -63,6 +65,7 @@ export const MOCK_MATCHES: MatchCandidate[] = [
     initials: "RJ",
     matchPct: 91,
     phone: "6025550202",
+    photo: "/other_assets/Robert.png",
   },
   {
     id: "3",
@@ -75,6 +78,7 @@ export const MOCK_MATCHES: MatchCandidate[] = [
     initials: "DL",
     matchPct: 88,
     phone: "6025550303",
+    photo: "/other_assets/Dorothy.png",
   },
 ];
 

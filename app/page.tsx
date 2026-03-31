@@ -182,7 +182,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem", flexWrap: "wrap" }}>
-                  {["Resistance Bands", "English", "Morning"].map(tag => (
+                  {["Gardening", "Coffee & Conversation", "Resistance Bands", "English"].map(tag => (
                     <span key={tag} style={{ backgroundColor: C.white, color: C.green, fontSize: "0.78rem", fontWeight: 600, padding: "0.25rem 0.75rem", borderRadius: "100px", border: `1px solid rgba(27,52,40,0.15)` }}>{tag}</span>
                   ))}
                 </div>
@@ -328,7 +328,7 @@ export default function HomePage() {
           {/* Matching strip */}
           <div style={{ backgroundColor: C.white, borderRadius: "20px", padding: "1.75rem 2.25rem", display: "flex", alignItems: "center", gap: "1.5rem", boxShadow: `0 4px 24px rgba(27,52,40,0.07)`, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "50%", backgroundColor: C.green, display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontFamily: "var(--font-epilogue)", fontWeight: 900, fontSize: "1.25rem" }}>R</div>
+              <img src="/other_assets/Robert.png" alt="Robert" style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 {[0,1,2].map(i => <div key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: C.green, opacity: 0.3 + i * 0.25 }} />)}
               </div>
@@ -336,7 +336,7 @@ export default function HomePage() {
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 {[0,1,2].map(i => <div key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: C.yellow, opacity: 0.3 + i * 0.25 }} />)}
               </div>
-              <div style={{ width: "48px", height: "48px", borderRadius: "50%", backgroundColor: C.yellow, display: "flex", alignItems: "center", justifyContent: "center", color: C.green, fontFamily: "var(--font-epilogue)", fontWeight: 900, fontSize: "1.25rem" }}>D</div>
+              <img src="/other_assets/Dorothy.png" alt="Dorothy" style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
             </div>
             <div style={{ flex: 1, minWidth: "200px" }}>
               <p style={{ fontWeight: 700, fontSize: "1.05rem", color: C.greenDark }}>Joyn found a match in 8 seconds</p>

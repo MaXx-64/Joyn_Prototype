@@ -104,23 +104,27 @@ export default function MatchesPage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1.25rem" }}>
 
                   {/* Avatar */}
-                  <div style={{
-                    width: "60px",
-                    height: "60px",
-                    borderRadius: "50%",
-                    backgroundColor: "#173124",
-                    color: "#FFFFFF",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "var(--font-epilogue), serif",
-                    fontWeight: 700,
-                    fontSize: "1.125rem",
-                    flexShrink: 0,
-                    letterSpacing: "-0.01em",
-                  }}>
-                    {match.initials}
-                  </div>
+                  {match.photo ? (
+                    <img src={match.photo} alt={match.name} style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
+                  ) : (
+                    <div style={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      backgroundColor: "#173124",
+                      color: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontFamily: "var(--font-epilogue), serif",
+                      fontWeight: 700,
+                      fontSize: "1.125rem",
+                      flexShrink: 0,
+                      letterSpacing: "-0.01em",
+                    }}>
+                      {match.initials}
+                    </div>
+                  )}
 
                   <div style={{ flex: 1 }}>
                     <p style={{
