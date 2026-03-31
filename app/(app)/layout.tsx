@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 import { CompanionWidget } from "@/components/companion/CompanionWidget";
 
 const navItems = [
@@ -16,13 +16,6 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  async function handleSignOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
-  }
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-lexend), sans-serif" }}>
@@ -30,7 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* ── Sidebar ── */}
       <aside style={{
         width: "272px",
-        backgroundColor: "#173124",
+        backgroundColor: "#1b3428",
         position: "fixed",
         top: 0,
         left: 0,
@@ -39,7 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         flexDirection: "column",
         zIndex: 40,
         /* Subtle tonal gradient — ink on paper effect */
-        background: "linear-gradient(180deg, #173124 0%, #1E3B2C 100%)",
+        background: "linear-gradient(180deg, #1b3428 0%, #213d30 100%)",
       }}>
 
         {/* Logo area — clicking navigates to dashboard */}
@@ -56,19 +49,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
           >
-            <p style={{
-              fontFamily: "var(--font-epilogue), serif",
-              fontWeight: 900,
-              fontSize: "2.25rem",
-              color: "#FFFFFF",
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-              cursor: "pointer",
-            }}>
-              JOYN
-            </p>
+            <Image
+              src="/brand_assets/JoynLogoMono.png"
+              alt="Joyn"
+              width={120}
+              height={44}
+              style={{ objectFit: "contain", objectPosition: "left" }}
+              priority
+            />
           </Link>
-          <p style={{ fontSize: "0.75rem", color: "#E8C84A", fontWeight: 500, marginTop: "0.375rem", letterSpacing: "0.02em" }}>
+          <p style={{ fontSize: "0.75rem", color: "#e7c74c", fontWeight: 500, marginTop: "0.5rem", letterSpacing: "0.02em" }}>
             Connect. Belong. Age with Joy.
           </p>
         </div>
@@ -117,7 +107,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     transform: "translateY(-50%)",
                     width: "3px",
                     height: "60%",
-                    backgroundColor: "#E8C84A",
+                    backgroundColor: "#e7c74c",
                     borderRadius: "0 3px 3px 0",
                   }} />
                 )}
@@ -128,10 +118,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {/* Sign out */}
+        {/* Back to Home */}
         <div style={{ padding: "1rem 1rem 2rem" }}>
-          <button
-            onClick={handleSignOut}
+          <Link
+            href="/"
             style={{
               display: "flex",
               alignItems: "center",
@@ -139,35 +129,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               padding: "0.875rem 1rem",
               borderRadius: "0.875rem",
               border: "1px solid rgba(255,255,255,0.15)",
-              backgroundColor: "transparent",
               color: "rgba(255,255,255,0.6)",
               fontSize: "1rem",
               fontWeight: 500,
-              cursor: "pointer",
               width: "100%",
               minHeight: "52px",
-              transition: "all 0.15s",
-              fontFamily: "var(--font-lexend), sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLButtonElement;
-              el.style.backgroundColor = "rgba(255,255,255,0.08)";
-              el.style.color = "#FFFFFF";
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLButtonElement;
-              el.style.backgroundColor = "transparent";
-              el.style.color = "rgba(255,255,255,0.6)";
+              textDecoration: "none",
             }}
           >
-            <span style={{ fontSize: "1.125rem" }}>🚪</span>
-            Sign Out
-          </button>
+            <span style={{ fontSize: "1.125rem" }}>←</span>
+            Back to Home
+          </Link>
         </div>
       </aside>
 
       {/* ── Main content ── */}
-      <main style={{ marginLeft: "272px", flex: 1, backgroundColor: "#FEF9ED", minHeight: "100vh" }}>
+      <main style={{ marginLeft: "272px", flex: 1, backgroundColor: "#ede8d9", minHeight: "100vh" }}>
         {children}
       </main>
 

@@ -61,19 +61,20 @@ export function MoodWidget() {
   return (
     <div
       style={{
-        backgroundColor: "#E7E2D7",
-        border: "2px solid #C2C8C2",
-        borderRadius: "2rem",
+        backgroundColor: "#ffffff",
+        border: "1.5px solid #cac5b8",
+        borderRadius: "1.75rem",
         padding: "1.5rem",
+        boxShadow: "0 2px 12px 0 rgba(27,52,40,0.06)",
       }}
     >
       <p
         style={{
-          fontSize: "0.75rem",
-          fontWeight: 600,
+          fontSize: "0.7rem",
+          fontWeight: 700,
           textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          color: "#735C00",
+          letterSpacing: "0.12em",
+          color: "#6e726c",
           marginBottom: "0.875rem",
         }}
       >
@@ -82,7 +83,7 @@ export function MoodWidget() {
 
       {!selectedMood ? (
         <>
-          <p style={{ fontSize: "1.0625rem", fontWeight: 600, color: "#173124", marginBottom: "1rem" }}>
+          <p style={{ fontSize: "1.0625rem", fontWeight: 600, color: "#1b3428", marginBottom: "1rem" }}>
             How are you feeling today?
           </p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -96,39 +97,39 @@ export function MoodWidget() {
                   minHeight: "44px",
                   padding: "0.5rem 0.75rem",
                   borderRadius: "1rem",
-                  border: "2px solid #C2C8C2",
-                  backgroundColor: "#FEF9ED",
+                  border: "1.5px solid #cac5b8",
+                  backgroundColor: "#ede8d9",
                   cursor: "pointer",
                   fontSize: "1.375rem",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   gap: "0.2rem",
-                  transition: "border-color 0.15s",
+                  transition: "border-color 0.15s, background-color 0.15s",
                 }}
               >
                 <span>{opt.emoji}</span>
-                <span style={{ fontSize: "0.65rem", color: "#727973", fontWeight: 500 }}>{opt.label}</span>
+                <span style={{ fontSize: "0.65rem", color: "#6e726c", fontWeight: 500 }}>{opt.label}</span>
               </button>
             ))}
           </div>
         </>
       ) : (
         <div aria-live="polite">
-          <p style={{ fontSize: "1.0625rem", color: "#173124", lineHeight: 1.6, marginBottom: isLow ? "0.875rem" : 0 }}>
+          <p style={{ fontSize: "1.0625rem", color: "#1b3428", lineHeight: 1.6, marginBottom: isLow ? "0.875rem" : 0 }}>
             {ACKNOWLEDGMENTS[selectedMood] ?? "Thanks for sharing! 🌻"}
           </p>
           {isLow && (
             <>
-              <p style={{ fontSize: "1rem", color: "#4A5C50", marginBottom: "0.75rem" }}>
+              <p style={{ fontSize: "1rem", color: "#4a5c50", marginBottom: "0.75rem" }}>
                 Would you like to reach out to one of your companions?
               </p>
               <Link
                 href="/match"
                 style={{
                   display: "inline-block",
-                  backgroundColor: "#173124",
-                  color: "#FFFFFF",
+                  backgroundColor: "#1b3428",
+                  color: "#ffffff",
                   fontWeight: 600,
                   padding: "0.625rem 1.25rem",
                   borderRadius: "3rem",

@@ -1,99 +1,130 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { MoodWidget } from "@/components/dashboard/MoodWidget";
-import { ConnectionNudgeWidget } from "@/components/dashboard/ConnectionNudgeWidget";
-import { createClient } from "@/lib/supabase/client";
 
-export default function DashboardPage() {
-  const [userName, setUserName] = useState<string>("Friend");
-  const [matches, setMatches] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+// ── Static demo data — no auth required ──────────────────────────────────────
 
-  const supabase = createClient();
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+const DEMO_USER = { name: "Barbara", streakDays: 5 };
+
+const DEMO_MATCHES = [
+  {
+    id: "1",
+    name: "Margaret",
+    age: 71,
+    city: "Phoenix",
+    fitness: "Beginner",
+    interests: ["Chair Yoga", "Gardening", "Reading", "Walking"],
+    bio: "Retired schoolteacher who loves being outdoors and staying active. I'd love a partner for morning chair yoga sessions — it's changed my whole day.",
+    initials: "MW",
+    matchPct: 97,
+  },
+  {
+    id: "2",
+    name: "Robert",
+    age: 68,
+    city: "Scottsdale",
+    fitness: "Moderate",
+    interests: ["Walking", "Music", "Cooking", "Photography"],
+    bio: "Former engineer who walks 3 miles every morning and plays guitar most evenings. Looking for a walking buddy to keep each other accountable.",
+    initials: "RJ",
+    matchPct: 91,
+  },
+  {
+    id: "3",
+    name: "Dorothy",
+    age: 74,
+    city: "Mesa",
+    fitness: "Beginner",
+    interests: ["Stretching", "Painting", "Birdwatching", "Gardening"],
+    bio: "Moved to Mesa five years ago and still building my social circle. I do watercolor painting and early birdwatching at Riparian Preserve most Tuesdays.",
+    initials: "DL",
+    matchPct: 88,
+  },
+];
+
+const DEMO_SESSION = {
+  activity: "Morning Walk",
+  partner: "Robert",
+  dateLabel: "This Saturday",
+  time: "8:00 AM",
+  location: "Scottsdale Greenbelt Trail",
+  partnerId: "2",
+};
+
+const DEMO_EVENTS = [
+  { id: "1", name: "Cesar Chavez Senior Walk", date: "April 3", location: "Phoenix, AZ", category: "Fitness" },
+  { id: "2", name: "Tempe Senior Expo", date: "April 14", location: "Tempe, AZ", category: "Social" },
+  { id: "3", name: "Silver Linings Senior Expo", date: "April 18", location: "Sun Lakes, AZ", category: "Social" },
+  { id: "4", name: "Uptown Farmers Market Meetup", date: "April 22", location: "Phoenix, AZ", category: "Social" },
+];
+
+// ── Brand tokens ─────────────────────────────────────────────────────────────
+const C = {
+  green:    "#1b3428",
+  yellow:   "#e7c74c",
+  goldText: "#8a7520",
+  cream:    "#ede8d9",
+  surface:  "#e4dfd0",
+  border:   "#cac5b8",
+  muted:    "#6e726c",
+  white:    "#ffffff",
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function today() {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
+}
 
-  useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        // 1. Fetch User Profile
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("full_name")
-            .eq("id", user.id)
-            .single();
-          if (profile?.full_name) {
-            setUserName(profile.full_name.split(" ")[0]);
-          }
-        }
-
-        // 2. Fetch Matches, Events, Sessions in parallel
-        const [matchesRes, eventsRes, sessionsRes] = await Promise.all([
-          fetch("/api/ai/match/candidates").then((r) => r.json()).catch(() => ({ matches: [] })),
-          fetch("/api/events").then((r) => r.json()).catch(() => ({ events: [] })),
-          fetch("/api/sessions").then((r) => r.json()).catch(() => ({ sessions: [] }))
-        ]);
-
-        if (matchesRes?.matches?.length > 0) {
-          setMatches(matchesRes.matches.slice(0, 3)); // show top 3 on dashboard
-        }
-        if (eventsRes?.events) setEvents(eventsRes.events);
-        if (sessionsRes?.sessions) setSessions(sessionsRes.sessions);
-
-      } catch (error) {
-        console.error("Error loading dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDashboardData();
-  }, [supabase]);
-
-  // Find the top match for the nudge widget
-  const topMatch = matches.length > 0 ? matches[0] : null;
-
+// ── Component ─────────────────────────────────────────────────────────────────
+export default function DashboardPage() {
   return (
-    <div style={{ fontFamily: "var(--font-lexend), sans-serif", color: "#173124", minHeight: "100vh" }}>
-      {/* ── Greeting header ── */}
+    <div style={{ fontFamily: "var(--font-lexend), sans-serif", color: C.green, minHeight: "100vh", backgroundColor: C.cream }}>
+
+      {/* ── Header ── */}
       <div style={{
-        backgroundColor: "#FEF9ED",
+        backgroundColor: C.cream,
         padding: "2.5rem 2.5rem 2rem",
         display: "flex",
         alignItems: "flex-end",
         justifyContent: "space-between",
         flexWrap: "wrap",
         gap: "1rem",
+        borderBottom: `1px solid ${C.border}`,
       }}>
         <div>
-          <p className="label-meta" style={{ marginBottom: "0.5rem" }}>Your Dashboard</p>
+          {/* Demo badge */}
+          <span style={{
+            display: "inline-block",
+            backgroundColor: C.yellow,
+            color: C.green,
+            fontSize: "0.65rem",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            padding: "0.2rem 0.625rem",
+            borderRadius: "3rem",
+            marginBottom: "0.875rem",
+          }}>
+            Demo Mode
+          </span>
           <h1 style={{
             fontFamily: "var(--font-epilogue), serif",
             fontWeight: 800,
             fontSize: "2.5rem",
-            color: "#173124",
+            color: C.green,
             letterSpacing: "-0.03em",
             lineHeight: 1,
             marginBottom: "0.5rem",
           }}>
-            Good morning, {userName} 🌻
+            Good morning, {DEMO_USER.name} 🌻
           </h1>
-          <p style={{ fontSize: "1rem", color: "#727973" }}>{today}</p>
+          <p style={{ fontSize: "1rem", color: C.muted }}>{today()}</p>
         </div>
 
         {/* Streak badge */}
         <div style={{
-          backgroundColor: "#173124",
+          backgroundColor: C.green,
           borderRadius: "2rem",
           padding: "1rem 1.75rem",
           display: "flex",
@@ -106,15 +137,55 @@ export default function DashboardPage() {
               fontFamily: "var(--font-epilogue), serif",
               fontWeight: 800,
               fontSize: "1.5rem",
-              color: "#E8C84A",
+              color: C.yellow,
               lineHeight: 1,
               letterSpacing: "-0.02em",
             }}>
-              0-day connection streak
+              {DEMO_USER.streakDays}-day streak
             </p>
-            <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.7)", marginTop: "0.1rem" }}>Start your streak today!</p>
+            <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.65)", marginTop: "0.1rem" }}>
+              Keep it going!
+            </p>
           </div>
         </div>
+      </div>
+
+      {/* ── Stats strip ── */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "1px",
+        backgroundColor: C.border,
+        borderBottom: `1px solid ${C.border}`,
+      }}>
+        {[
+          { label: "AI Matches Found", value: "3", icon: "👥" },
+          { label: "Upcoming Meetup", value: "1", icon: "📅" },
+          { label: "Events Near You", value: "4", icon: "📍" },
+        ].map((stat) => (
+          <div key={stat.label} style={{
+            backgroundColor: C.surface,
+            padding: "1.125rem 2rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.875rem",
+          }}>
+            <span style={{ fontSize: "1.375rem" }}>{stat.icon}</span>
+            <div>
+              <p style={{
+                fontFamily: "var(--font-epilogue), serif",
+                fontWeight: 800,
+                fontSize: "1.625rem",
+                color: C.green,
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+              }}>
+                {stat.value}
+              </p>
+              <p style={{ fontSize: "0.75rem", color: C.muted, marginTop: "0.1rem" }}>{stat.label}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* ── Body ── */}
@@ -123,271 +194,338 @@ export default function DashboardPage() {
         gridTemplateColumns: "5fr 4fr",
         gap: "2.5rem",
         padding: "2.5rem",
-        backgroundColor: "#F8F3E8",
-        minHeight: "calc(100vh - 160px)",
+        minHeight: "calc(100vh - 220px)",
       }}>
-        {/* LEFT — Workout Partners */}
+
+        {/* ── LEFT: Companions ── */}
         <div>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-            <p className="label-meta">Your Companions</p>
-            <span style={{ fontSize: "0.85rem", color: "#727973" }}>AI-matched for you</span>
+            <p style={{
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: C.muted,
+            }}>
+              Your Companions
+            </p>
+            <span style={{ fontSize: "0.8rem", color: C.goldText, fontWeight: 500 }}>AI-matched for you</span>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            {loading ? (
-              // Loading Shimmer
-              [1, 2, 3].map((i) => (
-                <div key={i} style={{
-                  backgroundColor: "#E7E2D7",
-                  border: "2px solid #C2C8C2",
-                  borderRadius: "2rem",
-                  padding: "1.75rem",
-                  height: "160px",
-                  animation: "dashboard-shimmer 1.6s ease-in-out infinite",
-                }} />
-              ))
-            ) : matches.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "3rem", backgroundColor: "#E7E2D7", borderRadius: "2rem", border: "2px solid #C2C8C2" }}>
-                <p style={{ fontWeight: 600, color: "#173124", fontSize: "1.2rem", marginBottom: "0.5rem" }}>No matches yet</p>
-                <p style={{ color: "#727973" }}>We are analyzing your profile to find the perfect companions.</p>
-              </div>
-            ) : (
-              matches.map((match) => (
-                <div key={match.id} className="card-base" style={{ padding: "1.75rem" }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1.25rem" }}>
-                    {/* Avatar */}
-                    <div style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "50%",
-                      backgroundColor: "#173124",
-                      color: "#FFFFFF",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+            {DEMO_MATCHES.map((match) => (
+              <div key={match.id} style={{
+                backgroundColor: C.white,
+                border: `1.5px solid ${C.border}`,
+                borderRadius: "1.75rem",
+                padding: "1.75rem",
+                transition: "box-shadow 0.2s ease, transform 0.2s ease",
+                boxShadow: "0 2px 12px 0 rgba(27,52,40,0.06)",
+              }}>
+
+                {/* Top row: avatar + name + match % */}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1rem" }}>
+                  {/* Avatar */}
+                  <div style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "50%",
+                    backgroundColor: C.green,
+                    color: C.white,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "var(--font-epilogue), serif",
+                    fontWeight: 700,
+                    fontSize: "1rem",
+                    flexShrink: 0,
+                    letterSpacing: "-0.01em",
+                  }}>
+                    {match.initials}
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <p style={{
                       fontFamily: "var(--font-epilogue), serif",
                       fontWeight: 700,
-                      fontSize: "1.125rem",
-                      flexShrink: 0,
-                      letterSpacing: "-0.01em",
+                      fontSize: "1.3rem",
+                      color: C.green,
+                      letterSpacing: "-0.02em",
+                      lineHeight: 1.1,
                     }}>
-                      {match.initials}
-                    </div>
-
-                    <div style={{ flex: 1 }}>
-                      <p style={{
-                        fontFamily: "var(--font-epilogue), serif",
-                        fontWeight: 700,
-                        fontSize: "1.375rem",
-                        color: "#173124",
-                        letterSpacing: "-0.02em",
-                        lineHeight: 1.1,
-                      }}>
-                        {match.name}, {match.age}
-                      </p>
-                      <p style={{ fontSize: "0.9rem", color: "#727973", marginTop: "0.2rem" }}>{match.city}, AZ</p>
-                    </div>
-
-                    {/* Match % */}
-                    <div style={{ textAlign: "right" }}>
-                      <p style={{
-                        fontFamily: "var(--font-epilogue), serif",
-                        fontWeight: 800,
-                        fontSize: "1.5rem",
-                        color: "#735C00",
-                        letterSpacing: "-0.02em",
-                        lineHeight: 1,
-                      }}>
-                        {match.matchPct}%
-                      </p>
-                      <p style={{ fontSize: "0.7rem", color: "#727973", textTransform: "uppercase", letterSpacing: "0.08em" }}>match</p>
-                    </div>
+                      {match.name}, {match.age}
+                    </p>
+                    <p style={{ fontSize: "0.875rem", color: C.muted, marginTop: "0.15rem" }}>
+                      {match.city}, AZ · {match.fitness}
+                    </p>
                   </div>
 
-                  {/* Tags */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.25rem" }}>
-                    <span style={{
-                      backgroundColor: "#173124",
-                      color: "#FFFFFF",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      padding: "0.25rem 0.875rem",
+                  {/* Match % */}
+                  <div style={{
+                    backgroundColor: C.yellow,
+                    borderRadius: "1rem",
+                    padding: "0.4rem 0.875rem",
+                    textAlign: "center",
+                    flexShrink: 0,
+                  }}>
+                    <p style={{
+                      fontFamily: "var(--font-epilogue), serif",
+                      fontWeight: 800,
+                      fontSize: "1.25rem",
+                      color: C.green,
+                      lineHeight: 1,
+                      letterSpacing: "-0.02em",
+                    }}>
+                      {match.matchPct}%
+                    </p>
+                    <p style={{ fontSize: "0.6rem", color: C.green, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.7 }}>match</p>
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <p style={{
+                  fontSize: "0.9375rem",
+                  color: "#3d4a40",
+                  lineHeight: 1.6,
+                  marginBottom: "1.125rem",
+                }}>
+                  {match.bio}
+                </p>
+
+                {/* Tags */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1.25rem" }}>
+                  {match.interests.map((interest) => (
+                    <span key={interest} style={{
+                      backgroundColor: C.surface,
+                      border: `1.5px solid ${C.border}`,
+                      color: C.green,
+                      fontSize: "0.775rem",
+                      fontWeight: 500,
+                      padding: "0.25rem 0.75rem",
                       borderRadius: "3rem",
                     }}>
-                      {match.fitness}
+                      {interest}
                     </span>
-                    {match.interests?.map((interest: string) => (
-                      <span key={interest} style={{
-                        backgroundColor: "#E5E0D5",
-                        border: "2px solid #C2C8C2",
-                        color: "#173124",
-                        fontSize: "0.8rem",
-                        fontWeight: 500,
-                        padding: "0.2rem 0.75rem",
-                        borderRadius: "3rem",
-                      }}>
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-
-                  <Link href={`/match/${match.id}`} className="btn-primary" style={{ padding: "0.625rem 1.5rem", fontSize: "0.95rem" }}>
-                    Connect
-                  </Link>
+                  ))}
                 </div>
-              ))
-            )}
+
+                <Link href={`/match/${match.id}`} style={{
+                  display: "inline-block",
+                  backgroundColor: C.green,
+                  color: C.white,
+                  fontWeight: 600,
+                  padding: "0.625rem 1.5rem",
+                  borderRadius: "3rem",
+                  fontSize: "0.95rem",
+                  textDecoration: "none",
+                  transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                  minHeight: "44px",
+                  lineHeight: "1.5",
+                }}>
+                  Connect with {match.name} →
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* RIGHT — Widgets + Sessions + Events */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+        {/* ── RIGHT: Widgets ── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+
           {/* Mood check-in */}
           <MoodWidget />
 
           {/* Connection nudge */}
-          <ConnectionNudgeWidget 
-            companionName={topMatch?.name} 
-            companionId={topMatch?.id} 
-            daysSince={0} // Force "new match" nudge
-          />
+          <div style={{
+            backgroundColor: C.green,
+            borderRadius: "1.75rem",
+            padding: "1.5rem",
+            color: C.white,
+          }}>
+            <p style={{
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: C.yellow,
+              marginBottom: "0.875rem",
+            }}>
+              Say Hello
+            </p>
+            <p style={{ fontSize: "1.0625rem", lineHeight: 1.65, marginBottom: "1rem", color: "rgba(255,255,255,0.9)" }}>
+              Margaret is your closest match. It&apos;s a great day to say hello and introduce yourself.
+            </p>
+            <Link href="/match/1" style={{
+              display: "inline-block",
+              backgroundColor: C.yellow,
+              color: C.green,
+              fontWeight: 700,
+              padding: "0.625rem 1.25rem",
+              borderRadius: "3rem",
+              fontSize: "0.95rem",
+              textDecoration: "none",
+              minHeight: "44px",
+              lineHeight: "1.5",
+            }}>
+              Say hello to Margaret →
+            </Link>
+          </div>
 
-          {/* Sessions */}
+          {/* Upcoming meetup */}
           <div>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-              <p className="label-meta">Your Upcoming Meetups</p>
-              <Link href="/sessions" style={{ fontSize: "0.85rem", color: "#735C00", textDecoration: "none", fontWeight: 600 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "1rem" }}>
+              <p style={{
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: C.muted,
+              }}>
+                Upcoming Meetup
+              </p>
+              <Link href="/sessions" style={{ fontSize: "0.825rem", color: C.goldText, textDecoration: "none", fontWeight: 600 }}>
                 Plan new →
               </Link>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {loading ? (
+            <div style={{
+              backgroundColor: C.white,
+              border: `1.5px solid ${C.border}`,
+              borderRadius: "1.75rem",
+              padding: "1.5rem",
+              boxShadow: "0 2px 12px 0 rgba(27,52,40,0.06)",
+            }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                {/* Date block */}
                 <div style={{
-                  backgroundColor: "#E7E2D7",
-                  border: "2px solid #C2C8C2",
-                  borderRadius: "2rem",
-                  padding: "1.5rem",
-                  height: "100px",
-                  animation: "dashboard-shimmer 1.6s ease-in-out infinite",
-                }} />
-              ) : sessions.length === 0 ? (
-                <div className="card-base" style={{ padding: "1.5rem", textAlign: "center" }}>
-                   <p style={{  color: "#727973", fontSize: "0.95rem" }}>No upcoming meetups yet.</p>
+                  backgroundColor: C.green,
+                  borderRadius: "0.875rem",
+                  padding: "0.625rem 0.875rem",
+                  textAlign: "center",
+                  flexShrink: 0,
+                  minWidth: "52px",
+                }}>
+                  <p style={{
+                    fontFamily: "var(--font-epilogue), serif",
+                    fontWeight: 800,
+                    fontSize: "1.375rem",
+                    color: C.yellow,
+                    lineHeight: 1,
+                    letterSpacing: "-0.02em",
+                  }}>
+                    Sat
+                  </p>
+                  <p style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", marginTop: "0.1rem", fontWeight: 500 }}>Apr 5</p>
                 </div>
-              ) : (
-                sessions.map((session) => (
-                  <div key={session.id} className="card-base" style={{ padding: "1.5rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
-                      <div>
-                        <p style={{
-                          fontFamily: "var(--font-epilogue), serif",
-                          fontWeight: 700,
-                          fontSize: "1.125rem",
-                          color: "#173124",
-                          letterSpacing: "-0.02em",
-                          marginBottom: "0.2rem",
-                        }}>
-                          {session.activity}
-                        </p>
-                        <p style={{ fontSize: "0.9rem", color: "#727973" }}>
-                          with {session.partner} · {session.dateLabel} at {session.time}
-                        </p>
-                      </div>
-                    </div>
-                    <button style={{
-                      backgroundColor: "#735C00",
-                      color: "#FFFFFF",
-                      fontWeight: 600,
-                      padding: "0.5rem 1.25rem",
-                      borderRadius: "3rem",
-                      fontSize: "0.9rem",
-                      border: "none",
-                      cursor: "pointer",
-                      minHeight: "40px",
-                      transition: "transform 0.15s ease",
-                    }}>
-                      Join Meetup
-                    </button>
-                  </div>
-                ))
-              )}
+
+                <div style={{ flex: 1 }}>
+                  <p style={{
+                    fontFamily: "var(--font-epilogue), serif",
+                    fontWeight: 700,
+                    fontSize: "1.125rem",
+                    color: C.green,
+                    letterSpacing: "-0.02em",
+                    marginBottom: "0.2rem",
+                  }}>
+                    {DEMO_SESSION.activity}
+                  </p>
+                  <p style={{ fontSize: "0.875rem", color: C.muted, lineHeight: 1.5 }}>
+                    with {DEMO_SESSION.partner} · {DEMO_SESSION.time}<br />
+                    {DEMO_SESSION.location}
+                  </p>
+                </div>
+              </div>
+
+              <Link href={`/match/${DEMO_SESSION.partnerId}`} style={{
+                display: "inline-block",
+                marginTop: "1rem",
+                backgroundColor: C.yellow,
+                color: C.green,
+                fontWeight: 700,
+                padding: "0.5rem 1.25rem",
+                borderRadius: "3rem",
+                fontSize: "0.875rem",
+                textDecoration: "none",
+                minHeight: "40px",
+                lineHeight: "1.5",
+              }}>
+                Message Robert →
+              </Link>
             </div>
           </div>
 
           {/* Events */}
           <div>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-              <p className="label-meta">Arizona Events</p>
-              <Link href="/events" style={{ fontSize: "0.85rem", color: "#735C00", textDecoration: "none", fontWeight: 600 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "1rem" }}>
+              <p style={{
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: C.muted,
+              }}>
+                Arizona Events
+              </p>
+              <Link href="/events" style={{ fontSize: "0.825rem", color: C.goldText, textDecoration: "none", fontWeight: 600 }}>
                 See all →
               </Link>
             </div>
 
-            <div style={{ backgroundColor: "#E7E2D7", border: "2px solid #C2C8C2", borderRadius: "2rem", overflow: "hidden" }}>
-              {loading ? (
-                 <div style={{
-                  padding: "1.5rem",
-                  height: "150px",
-                  animation: "dashboard-shimmer 1.6s ease-in-out infinite",
-                }} />
-              ) : events.length === 0 ? (
-                <div style={{ padding: "1.5rem", textAlign: "center" }}>
-                   <p style={{  color: "#727973", fontSize: "0.95rem" }}>No events found.</p>
-                </div>
-              ) : (
-                events.map((event, idx) => (
-                  <div key={event.id} className="ledger-row" style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                    borderBottom: idx < events.length - 1 ? "1px solid #D4CFCA" : "none",
-                  }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{
-                        fontFamily: "var(--font-epilogue), serif",
-                        fontWeight: 600,
-                        fontSize: "1rem",
-                        color: "#173124",
-                        marginBottom: "0.15rem",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}>
-                        {event.name}
-                      </p>
-                      <p style={{ fontSize: "0.8rem", color: "#727973" }}>
-                        {event.date} · {event.location}
-                      </p>
-                    </div>
-                    <span style={{
-                      backgroundColor: event.category === "Fitness" ? "#173124" : "#E5E0D5",
-                      color: event.category === "Fitness" ? "#FFFFFF" : "#173124",
-                      border: event.category === "Fitness" ? "none" : "2px solid #C2C8C2",
-                      fontSize: "0.7rem",
+            <div style={{
+              backgroundColor: C.white,
+              border: `1.5px solid ${C.border}`,
+              borderRadius: "1.75rem",
+              overflow: "hidden",
+              boxShadow: "0 2px 12px 0 rgba(27,52,40,0.06)",
+            }}>
+              {DEMO_EVENTS.map((event, idx) => (
+                <div key={event.id} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  padding: "1rem 1.25rem",
+                  backgroundColor: idx % 2 === 0 ? C.white : C.cream,
+                  borderBottom: idx < DEMO_EVENTS.length - 1 ? `1px solid ${C.border}` : "none",
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{
+                      fontFamily: "var(--font-epilogue), serif",
                       fontWeight: 600,
-                      padding: "0.2rem 0.75rem",
-                      borderRadius: "3rem",
+                      fontSize: "0.9375rem",
+                      color: C.green,
+                      marginBottom: "0.1rem",
                       whiteSpace: "nowrap",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                      flexShrink: 0,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}>
-                      {event.category}
-                    </span>
+                      {event.name}
+                    </p>
+                    <p style={{ fontSize: "0.775rem", color: C.muted }}>
+                      {event.date} · {event.location}
+                    </p>
                   </div>
-                ))
-              )}
+                  <span style={{
+                    backgroundColor: event.category === "Fitness" ? C.green : C.surface,
+                    color: event.category === "Fitness" ? C.white : C.green,
+                    border: event.category === "Fitness" ? "none" : `1.5px solid ${C.border}`,
+                    fontSize: "0.65rem",
+                    fontWeight: 700,
+                    padding: "0.2rem 0.7rem",
+                    borderRadius: "3rem",
+                    whiteSpace: "nowrap",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    flexShrink: 0,
+                  }}>
+                    {event.category}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
+
         </div>
       </div>
-      <style>{`
-        @keyframes dashboard-shimmer {
-          0%, 100% { opacity: 0.6; }
-          50% { opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }
