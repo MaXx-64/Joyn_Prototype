@@ -42,13 +42,18 @@ type SupabaseProfile = {
 };
 
 export async function GET() {
+  // Return mock data immediately when Supabase isn't configured
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return Response.json({ matches: MOCK_MATCHES, source: "mock" });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return new Response("Unauthorized", { status: 401 });
+    return Response.json({ matches: MOCK_MATCHES, source: "mock" });
   }
 
   // ── 1. Load current user's profile ──────────────────────────────────────
