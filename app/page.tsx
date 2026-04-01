@@ -82,6 +82,24 @@ export default function HomePage() {
         .btn-demo:active {
           transform: translateY(0) scale(0.98);
         }
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+          .nav-links { display: none !important; }
+          .nav-mobile-cta { display: flex !important; }
+          .hero-section { padding: 3rem 1.25rem !important; }
+          .hero-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .hero-mock { display: none !important; }
+          .section-pad { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+          .two-col-grid { grid-template-columns: 1fr !important; gap: 1.75rem !important; }
+          .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 1rem !important; }
+          .guide-card { padding: 1.75rem !important; }
+          .cta-section { padding: 4rem 1.25rem !important; }
+          .video-section { padding: 2rem 1.25rem !important; }
+          .matching-strip { padding: 1.25rem !important; gap: 1rem !important; }
+        }
+        @media (max-width: 480px) {
+          .steps-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* ── Nav ── */}
@@ -97,7 +115,7 @@ export default function HomePage() {
         borderBottom: "1.5px solid rgba(27,52,40,0.12)",
       }}>
         <Image src="/brand_assets/JoynLogo.png" alt="Joyn" width={96} height={34} style={{ objectFit: "contain" }} priority />
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
           <a href="#problem" style={{ color: C.green, fontSize: "0.9rem", fontWeight: 500, textDecoration: "none" }}>The Problem</a>
           <a href="#how-it-works" style={{ color: C.green, fontSize: "0.9rem", fontWeight: 500, textDecoration: "none" }}>How It Works</a>
           <a href="/dashboard" style={{ color: C.green, fontSize: "0.9rem", fontWeight: 500, textDecoration: "none" }}>Try the Demo</a>
@@ -105,10 +123,13 @@ export default function HomePage() {
             Take the First Step
           </a>
         </div>
+        <a href="#join" className="nav-mobile-cta btn-primary" style={{ display: "none", backgroundColor: C.green, color: C.yellow, fontFamily: "var(--font-epilogue)", fontWeight: 700, fontSize: "0.85rem", letterSpacing: "0.06em", textTransform: "uppercase", padding: "0.625rem 1.25rem", borderRadius: "100px", textDecoration: "none" }}>
+          Join
+        </a>
       </nav>
 
       {/* ── Hero ── */}
-      <section style={{ backgroundColor: C.cream, padding: "5rem 2.5rem 5rem", overflow: "hidden", position: "relative" }}>
+      <section className="hero-section" style={{ backgroundColor: C.cream, padding: "5rem 2.5rem 5rem", overflow: "hidden", position: "relative" }}>
         <div style={{
           position: "absolute", inset: 0,
           background: `radial-gradient(ellipse 60% 80% at 10% 50%, rgba(27,52,40,0.05) 0%, transparent 70%),
@@ -117,7 +138,7 @@ export default function HomePage() {
           pointerEvents: "none",
         }} />
 
-        <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: "1fr 480px", gap: "4rem", alignItems: "center" }}>
+        <div className="hero-grid" style={{ maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: "1fr 480px", gap: "4rem", alignItems: "center" }}>
 
           {/* Left copy */}
           <div>
@@ -161,7 +182,7 @@ export default function HomePage() {
           </div>
 
           {/* Right: Mock App Card */}
-          <div style={{ position: "relative" }}>
+          <div className="hero-mock" style={{ position: "relative" }}>
             <div style={{ position: "absolute", inset: "-40px", background: `radial-gradient(ellipse at center, rgba(27,52,40,0.1) 0%, transparent 70%)`, pointerEvents: "none" }} />
             <div style={{ transform: "rotate(-1.5deg)", position: "relative", zIndex: 1, borderRadius: "24px", overflow: "hidden", backgroundColor: C.white, boxShadow: `0 24px 64px rgba(27,52,40,0.14), 0 4px 16px rgba(27,52,40,0.08)` }}>
 
@@ -225,7 +246,7 @@ export default function HomePage() {
 
 
       {/* ── The Problem ── */}
-      <section id="problem" style={{ backgroundColor: C.green, padding: "6rem 2.5rem", position: "relative", overflow: "hidden" }}>
+      <section id="problem" className="section-pad" style={{ backgroundColor: C.green, padding: "6rem 2.5rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 60% 80% at 10% 30%, rgba(232,245,243,0.05) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 90% 70%, rgba(231,199,76,0.07) 0%, transparent 60%)`, pointerEvents: "none" }} />
         <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
@@ -238,7 +259,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem", marginBottom: "4rem" }}>
+          <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem", marginBottom: "4rem" }}>
             {/* Loneliness */}
             <div>
               <div style={{ marginBottom: "1.5rem" }}>
@@ -288,7 +309,7 @@ export default function HomePage() {
       </section>
 
       {/* ── How It Works ── */}
-      <section id="how-it-works" style={{ backgroundColor: C.tint, padding: "6rem 2.5rem" }}>
+      <section id="how-it-works" className="section-pad" style={{ backgroundColor: C.tint, padding: "6rem 2.5rem" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
             <p style={{ fontFamily: "var(--font-epilogue)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: "1rem" }}>How It Works</p>
@@ -298,7 +319,7 @@ export default function HomePage() {
           </div>
 
           {/* 4 Steps */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", marginBottom: "3rem" }}>
+          <div className="steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", marginBottom: "3rem" }}>
             {[
               { num: "01", title: "Share a bit about yourself",   desc: "A warm 3-minute onboarding chat covering interests, hobbies, and schedule. No forms — just conversation." },
               { num: "02", title: "Meet a compatible partner",   desc: "Joyn introduces a matched partner — shared interests, same language, same time of day." },
@@ -326,7 +347,7 @@ export default function HomePage() {
           </div>
 
           {/* Matching strip */}
-          <div style={{ backgroundColor: C.white, borderRadius: "20px", padding: "1.75rem 2.25rem", display: "flex", alignItems: "center", gap: "1.5rem", boxShadow: `0 4px 24px rgba(27,52,40,0.07)`, flexWrap: "wrap" }}>
+          <div className="matching-strip" style={{ backgroundColor: C.white, borderRadius: "20px", padding: "1.75rem 2.25rem", display: "flex", alignItems: "center", gap: "1.5rem", boxShadow: `0 4px 24px rgba(27,52,40,0.07)`, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
               <img src="/other_assets/Robert.png" alt="Robert" style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", objectPosition: "center top", flexShrink: 0 }} />
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
@@ -364,9 +385,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "3.5rem" }}>
+          <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "3.5rem" }}>
             {/* Fitness Lead */}
-            <div style={{ backgroundColor: C.tint, borderRadius: "24px", padding: "3rem", position: "relative", overflow: "hidden" }}>
+            <div className="guide-card" style={{ backgroundColor: C.tint, borderRadius: "24px", padding: "3rem", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "180px", height: "180px", borderRadius: "50%", backgroundColor: "rgba(27,52,40,0.06)" }} />
               <div style={{ width: "60px", height: "60px", backgroundColor: C.green, borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
@@ -417,7 +438,7 @@ export default function HomePage() {
             </div>
 
             {/* Social Host */}
-            <div style={{ backgroundColor: C.cream, borderRadius: "24px", padding: "3rem", position: "relative", overflow: "hidden" }}>
+            <div className="guide-card" style={{ backgroundColor: C.cream, borderRadius: "24px", padding: "3rem", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "180px", height: "180px", borderRadius: "50%", backgroundColor: "rgba(231,199,76,0.1)" }} />
               <div style={{ width: "60px", height: "60px", backgroundColor: C.yellow, borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={C.green} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -446,7 +467,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Mock Video Call ── */}
-      <div style={{ backgroundColor: C.greenDark, padding: "4rem 2.5rem", position: "relative", overflow: "hidden" }}>
+      <div className="video-section section-pad" style={{ backgroundColor: C.greenDark, padding: "4rem 2.5rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 20% 50%, rgba(27,52,40,0.3) 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, rgba(231,199,76,0.06) 0%, transparent 60%)`, pointerEvents: "none" }} />
         <div style={{ maxWidth: "960px", margin: "0 auto", position: "relative", zIndex: 1 }}>
           <p style={{ textAlign: "center", fontSize: "0.875rem", color: "rgba(255,255,255,0.4)", fontStyle: "italic", marginBottom: "2rem" }}>
@@ -526,7 +547,7 @@ export default function HomePage() {
       </div>
 
       {/* ── Lead Capture CTA ── */}
-      <section id="join" style={{ backgroundColor: C.green, padding: "7rem 2.5rem", textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <section id="join" className="cta-section section-pad" style={{ backgroundColor: C.green, padding: "7rem 2.5rem", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 80% at 50% 50%, rgba(232,245,243,0.04) 0%, transparent 70%)`, pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: "-1rem", right: "3%", fontFamily: "var(--font-epilogue)", fontWeight: 900, fontSize: "clamp(6rem, 18vw, 16rem)", color: "rgba(255,255,255,0.025)", letterSpacing: "-0.05em", lineHeight: 1, userSelect: "none", pointerEvents: "none" }}>JOYN</div>
         <div style={{ position: "relative", zIndex: 1, maxWidth: "620px", margin: "0 auto" }}>

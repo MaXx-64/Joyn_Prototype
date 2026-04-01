@@ -61,7 +61,7 @@ interface Match   { id: string; name: string; age: number; city: string; fitness
 // ── Shared overlay shell ───────────────────────────────────────────────────────
 function Overlay({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="overlay-pad" style={{
       position: "fixed", inset: 0, zIndex: 200,
       backgroundColor: C.cream,
       overflowY: "auto",
@@ -362,9 +362,18 @@ function Dashboard({ profile, match, onReset }: { profile: Profile; match: Match
 
   return (
     <div style={{ fontFamily: "var(--font-lexend), sans-serif", color: C.green, minHeight: "100vh", backgroundColor: C.cream }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .dash-header { padding: 1.5rem 1.25rem 1.25rem !important; }
+          .dash-body { grid-template-columns: 1fr !important; padding: 1.25rem !important; gap: 1.5rem !important; }
+          .dash-streak { display: none !important; }
+          .overlay-pad { padding: 1.5rem 1rem 4rem !important; }
+          .match-card-pad { padding: 1.25rem !important; }
+        }
+      `}</style>
 
       {/* Header */}
-      <div style={{
+      <div className="dash-header" style={{
         backgroundColor: C.cream, padding: "2.5rem 2.5rem 2rem",
         borderBottom: `1px solid ${C.border}`,
         display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem",
@@ -390,7 +399,7 @@ function Dashboard({ profile, match, onReset }: { profile: Profile; match: Match
           </p>
         </div>
 
-        <div style={{
+        <div className="dash-streak" style={{
           backgroundColor: C.green, borderRadius: "2rem", padding: "1rem 1.75rem",
           display: "flex", alignItems: "center", gap: "0.75rem",
         }}>
@@ -405,7 +414,7 @@ function Dashboard({ profile, match, onReset }: { profile: Profile; match: Match
       </div>
 
       {/* Body */}
-      <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "2.5rem", padding: "2.5rem", alignItems: "start" }}>
+      <div className="dash-body" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "2.5rem", padding: "2.5rem", alignItems: "start" }}>
 
         {/* Left */}
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
